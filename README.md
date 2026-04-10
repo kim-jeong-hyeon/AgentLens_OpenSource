@@ -12,8 +12,6 @@ Existing mobile agents either take over your screen (foreground) or run invisibl
 
 The agent decides which modality to use based on the task context — no single visualization fits all situations. All overlays appear non-invasively over whatever you're currently doing (browsing, chatting, etc.), so you never lose your place.
 
-> **Paper:** *AgentLens: Adaptive Visual Modalities for Human–Agent Interaction in Mobile GUI Agents* (under review)
-
 ---
 
 ## How It Works
@@ -188,6 +186,18 @@ Type in the chat UI:
 > *"Summarize this week's schedule"*
 
 The agent opens Google Calendar, reads the weekly view, and generates a clean summary card showing just your events — no calendar chrome, just the facts.
+
+---
+
+## Using 3rd-Party Apps
+
+Apps like **Uber Eats**, **DoorDash**, and other 3rd-party services are not pre-installed. To use them with AgentLens:
+
+1. Install the app on the device/emulator via Google Play Store
+2. Open the app and sign in to your account
+3. Then ask the agent to perform tasks on that app (e.g., *"Order coffee on Uber Eats"*)
+
+> **Note:** The agent can operate any installed app — it is not limited to built-in system apps.
 
 ---
 

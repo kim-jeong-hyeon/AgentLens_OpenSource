@@ -13,10 +13,11 @@ from websockets.asyncio.server import serve, ServerConnection
 class AppConnection:
   """Manages the WebSocket connection to the Android assistant app."""
 
-  def __init__(self, port: int = 8765, llm=None, serial: str = None):
+  def __init__(self, port: int = 8765, llm=None, serial: str = None, adb_path: str = 'adb'):
     self._port = port
     self._llm = llm  # LLM instance for GenUI generation
     self._serial = serial  # ADB device serial (e.g. 'emulator-5554')
+    self._adb_path = adb_path
     # Packages whose tasks should be force-pinned to the VD whenever they
     # migrate to the default display. Updated by _handle_launch_app_request.
     self._pinned_packages: set[str] = set()
@@ -106,7 +107,7 @@ class AppConnection:
               bounds = action_data.get('bounds', {})
               cx = (bounds.get('x1', 0) + bounds.get('x2', 0)) // 2
               cy = (bounds.get('y1', 0) + bounds.get('y2', 0)) // 2
-              cmd = ['adb', 'shell', 'input', '-d', str(self._display_id),
+              cmd = [self._adb_path, 'shell', 'input', '-d', str(self._display_id),
                      'tap', str(cx), str(cy)]
               logging.info('Injecting tap at (%d, %d) on display %d', cx, cy, self._display_id)
               proc = await asyncio.create_subprocess_exec(*cmd)
@@ -153,7 +154,7 @@ class AppConnection:
 
     Returns the fully-qualified activity class name, or None on failure.
     """
-    cmd = ['adb']
+    cmd = [self._adb_path]
     if self._serial:
       cmd += ['-s', self._serial]
     cmd += ['shell', 'cmd', 'package', 'resolve-activity', '--brief', '--user',
@@ -220,7 +221,7 @@ class AppConnection:
         await websocket.send(json.dumps(resp))
         return
 
-    cmd = ['adb']
+    cmd = [self._adb_path]
     if self._serial:
       cmd += ['-s', self._serial]
     cmd += ['shell', 'am', 'start', '--display', str(display_id),
@@ -270,7 +271,7 @@ class AppConnection:
     while self._pinned_packages and self._display_id is not None:
       try:
         target_display = self._display_id
-        adb_cmd = ['adb']
+        adb_cmd = [self._adb_path]
         if self._serial:
           adb_cmd += ['-s', self._serial]
         proc = await asyncio.create_subprocess_exec(
@@ -403,13 +404,13 @@ class AppConnection:
         if dist < 20:
           # Tap
           cmd = [
-              'adb', 'shell', 'input', '-d', str(self._display_id),
+              self._adb_path, 'shell', 'input', '-d', str(self._display_id),
               'tap', str(int(x)), str(int(y)),
           ]
         else:
           # Swipe
           cmd = [
-              'adb', 'shell', 'input', '-d', str(self._display_id),
+              self._adb_path, 'shell', 'input', '-d', str(self._display_id),
               'swipe', str(int(sx)), str(int(sy)),
               str(int(x)), str(int(y)), '300',
           ]
@@ -430,7 +431,7 @@ class AppConnection:
     """
     if self._display_id is None:
       return None
-    cmd = ['adb']
+    cmd = [self._adb_path]
     if self._serial:
       cmd += ['-s', self._serial]
     cmd += ['shell', 'dumpsys', 'activity', 'activities']

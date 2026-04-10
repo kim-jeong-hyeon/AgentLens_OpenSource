@@ -202,7 +202,7 @@ async def _run_server(args):
   print(f'Initializing LLM with model {args.model}...')
   llm = Gpt4Wrapper(model_name=args.model)
 
-  app_conn = AppConnection(port=args.port, llm=llm, serial=args.serial)
+  app_conn = AppConnection(port=args.port, llm=llm, serial=args.serial, adb_path=args.adb_path)
   display_id = await app_conn.start_and_wait_for_app(timeout=36000.0)
 
   print(f'Connecting to Android device (serial={args.serial})...')
