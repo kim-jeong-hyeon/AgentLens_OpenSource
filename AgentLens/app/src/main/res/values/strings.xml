@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">AgentLens</string>
+    <string name="accessibility_service_description">AgentLens accessibility service for reading UI trees and injecting actions on virtual displays.</string>
+    <string name="projection_notification_channel">Virtual Display Projection</string>
+    <string name="projection_notification_title">AgentLens Virtual Display</string>
+    <string name="projection_notification_text">Virtual display is active</string>
+</resources>

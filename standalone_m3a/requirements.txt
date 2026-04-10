@@ -1,0 +1,8 @@
+absl-py==2.1.0
+immutabledict==2.0.0
+numpy==1.26.3
+opencv-python
+Pillow
+requests
+termcolor
+websockets
